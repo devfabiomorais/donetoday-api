@@ -1,3 +1,4 @@
+import { env } from '../../lib/env'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import crypto from 'node:crypto'
@@ -33,7 +34,7 @@ export const login = async (email: string, password: string) => {
 
   const token = jwt.sign(
     { id: user.id, role: user.role },
-    process.env.JWT_SECRET!,
+    env.JWT_SECRET!,
     { expiresIn: '7d' }
   )
 
