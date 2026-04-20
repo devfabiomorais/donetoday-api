@@ -1,14 +1,13 @@
 import { Router } from 'express'
-import { getUsers, getUserById, postUser, putUser, removeUser } from './users.controller'
+import { getMe, putMe, removeMe } from './users.controller'
 import { validate } from '../../middlewares/validate'
-import { createUserSchema, updateUserSchema } from './schemas/user.schema'
+import { updateUserSchema } from './schemas/user.schema'
+import { authenticate } from '../../middlewares/authenticate'
 
 const router = Router()
 
-router.get('/', getUsers)
-router.get('/:id', getUserById)
-router.post('/', validate(createUserSchema), postUser)
-router.put('/:id', validate(updateUserSchema), putUser)
-router.delete('/:id', removeUser)
+router.get('/me', authenticate, getMe)
+router.put('/me', authenticate, validate(updateUserSchema), putMe)
+router.delete('/me', authenticate, removeMe)
 
 export default router
