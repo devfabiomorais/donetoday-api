@@ -13,6 +13,13 @@ REST API for the DoneToday workout tracking app. Built with Node.js, TypeScript,
 - **Validation:** Zod
 - **Email:** Resend
 - **Documentation:** Swagger UI
+- **Deploy:** Railway
+
+## Production
+
+Base URL: `https://donetoday-api-production.up.railway.app`
+
+API Documentation: `https://donetoday-api-production.up.railway.app/docs`
 
 ## Getting Started
 
@@ -77,6 +84,42 @@ http://localhost:3000/docs
 | PUT | /users/me | Update current user profile | ✅ |
 | DELETE | /users/me | Delete current user account | ✅ |
 
+### User Settings
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /user-settings | Get current user settings | ✅ |
+| PUT | /user-settings | Update current user settings | ✅ |
+
+### Exercises
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /exercises | List all global exercises | ✅ |
+| GET | /exercises/me | List current user custom exercises | ✅ |
+| GET | /exercises/:id | Get exercise by ID | ✅ |
+| POST | /exercises | Create a custom exercise | ✅ |
+| PUT | /exercises/:id | Update a custom exercise | ✅ |
+| DELETE | /exercises/:id | Delete a custom exercise | ✅ |
+
+### Routines
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /routines | List public and own routines | ✅ |
+| GET | /routines/me | List current user routines | ✅ |
+| GET | /routines/:id | Get routine by ID | ✅ |
+| POST | /routines | Create a new routine | ✅ |
+| PUT | /routines/:id | Update a routine | ✅ |
+| DELETE | /routines/:id | Delete a routine | ✅ |
+
+### Workouts
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /workouts | List all workouts | ✅ |
+| GET | /workouts/:id | Get workout by ID | ✅ |
+| POST | /workouts/start | Start a new workout session | ✅ |
+| POST | /workouts/:id/save | Save and finish a workout | ✅ |
+| DELETE | /workouts/:id | Delete a workout | ✅ |
+| GET | /workouts/history/:exerciseId | Get last sets for an exercise | ✅ |
+
 ### Admin
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
@@ -89,23 +132,27 @@ http://localhost:3000/docs
 
 ```
 src/
-├── generated/prisma/     # Prisma Client (auto-generated)
+├── generated/prisma/       # Prisma Client (auto-generated)
 ├── lib/
-│   ├── prisma.ts         # Prisma Client instance
-│   ├── email.ts          # Email service (Resend)
-│   ├── env.ts            # Environment variables validation
-│   └── swagger.ts        # Swagger documentation
+│   ├── prisma.ts           # Prisma Client instance
+│   ├── email.ts            # Email service (Resend)
+│   ├── env.ts              # Environment variables validation
+│   └── swagger.ts          # Swagger documentation
 ├── middlewares/
-│   ├── errorHandler.ts   # Global error handler
-│   ├── validate.ts       # Zod validation middleware
-│   ├── authenticate.ts   # JWT authentication middleware
-│   └── authorize.ts      # Role-based authorization middleware
+│   ├── errorHandler.ts     # Global error handler
+│   ├── validate.ts         # Zod validation middleware
+│   ├── authenticate.ts     # JWT authentication middleware
+│   └── authorize.ts        # Role-based authorization middleware
 ├── modules/
-│   ├── auth/             # Authentication module
-│   ├── users/            # User profile module
-│   └── admin/            # Admin panel module
-├── app.ts                # Express app configuration
-└── server.ts             # Server entry point
+│   ├── auth/               # Authentication module
+│   ├── users/              # User profile module
+│   ├── user-settings/      # User settings module
+│   ├── exercises/          # Exercises module
+│   ├── routines/           # Routines module
+│   ├── workouts/           # Workouts module
+│   └── admin/              # Admin panel module
+├── app.ts                  # Express app configuration
+└── server.ts               # Server entry point
 ```
 
 ## Database Migrations
