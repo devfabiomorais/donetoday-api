@@ -6,11 +6,15 @@ export const swaggerDocument = {
     description: 'REST API for DoneToday app',
   },
   servers: [
-    {
-      url: 'http://localhost:3000',
-      description: 'Development server',
-    },
-  ],
+  {
+    url: 'http://localhost:3000',
+    description: 'Development server',
+  },
+  {
+    url: 'https://donetoday-api-production.up.railway.app',
+    description: 'Production server',
+  },
+],
   components: {
     securitySchemes: {
       bearerAuth: {
