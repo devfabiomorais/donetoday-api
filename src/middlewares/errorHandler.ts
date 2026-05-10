@@ -7,5 +7,15 @@ export const errorHandler = (
   next: NextFunction
 ) => {
   console.error(error)
-  res.status(500).json({ message: 'Internal server error' })
+
+  const knownErrors: Record<string, number> = {
+    'Invalid credentials': 401,
+    'Email already in use': 409,
+    'Invalid or expired token': 400,
+  }
+
+  const status = knownErrors[error.message] ?? 500
+  const message = status !== 500 ? error.message : 'Internal server error'
+
+  res.status(status).json({ message })
 }
