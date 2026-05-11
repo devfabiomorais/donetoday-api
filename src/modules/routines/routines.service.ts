@@ -10,11 +10,14 @@ export const findAccessibleRoutines = async (userId: string) => {
       ],
     },
     include: {
-      exercises: {
-        include: { exercise: true },
-        orderBy: { order: 'asc' },
-      },
+  exercises: {
+    include: {
+      exercise: true,
+      setsConfig: { orderBy: { setNumber: 'asc' } },
     },
+    orderBy: { order: 'asc' },
+  },
+},
     orderBy: { createdAt: 'desc' },
   })
 }
@@ -24,11 +27,14 @@ export const findRoutinesByUser = async (userId: string) => {
   return prisma.routine.findMany({
     where: { userId },
     include: {
-      exercises: {
-        include: { exercise: true },
-        orderBy: { order: 'asc' },
-      },
+  exercises: {
+    include: {
+      exercise: true,
+      setsConfig: { orderBy: { setNumber: 'asc' } },
     },
+    orderBy: { order: 'asc' },
+  },
+},
     orderBy: { createdAt: 'desc' },
   })
 }
@@ -38,11 +44,14 @@ export const findRoutineById = async (id: string, userId?: string) => {
   const routine = await prisma.routine.findUnique({
     where: { id },
     include: {
-      exercises: {
-        include: { exercise: true },
-        orderBy: { order: 'asc' },
-      },
+  exercises: {
+    include: {
+      exercise: true,
+      setsConfig: { orderBy: { setNumber: 'asc' } },
     },
+    orderBy: { order: 'asc' },
+  },
+},
   })
 
   if (!routine) return null
@@ -63,34 +72,50 @@ export const createRoutine = async (
       order: number
       sets: number
       restSeconds: number
+      setsConfig?: Array<{
+        setNumber: number
+        setType: string
+      }>
     }>
   }
 ) => {
   const { exercises, ...routineData } = data
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     const routine = await tx.routine.create({
-      data: {
-        ...routineData,
-        userId,
-      },
+      data: { ...routineData, userId },
     })
 
-    await tx.routineExercise.createMany({
-      data: exercises.map((ex) => ({
-        routineId: routine.id,
-        exerciseId: ex.exerciseId,
-        order: ex.order,
-        sets: ex.sets,
-        restSeconds: ex.restSeconds,
-      })),
-    })
+    for (const ex of exercises) {
+      const routineExercise = await tx.routineExercise.create({
+        data: {
+          routineId: routine.id,
+          exerciseId: ex.exerciseId,
+          order: ex.order,
+          sets: ex.sets,
+          restSeconds: ex.restSeconds,
+        },
+      })
+
+      if (ex.setsConfig && ex.setsConfig.length > 0) {
+        await tx.routineSetConfig.createMany({
+          data: ex.setsConfig.map((sc) => ({
+            routineExerciseId: routineExercise.id,
+            setNumber: sc.setNumber,
+            setType: sc.setType as any,
+          })),
+        })
+      }
+    }
 
     return tx.routine.findUnique({
       where: { id: routine.id },
       include: {
         exercises: {
-          include: { exercise: true },
+          include: {
+            exercise: true,
+            setsConfig: { orderBy: { setNumber: 'asc' } },
+          },
           orderBy: { order: 'asc' },
         },
       },
@@ -110,39 +135,55 @@ export const updateRoutine = async (
       order: number
       sets: number
       restSeconds: number
+      setsConfig?: Array<{
+        setNumber: number
+        setType: string
+      }>
     }>
   }
 ) => {
   const { exercises, ...routineData } = data
 
-  return prisma.$transaction(async (tx) => {
-    // Atualiza os dados básicos da rotina
+  return prisma.$transaction(async (tx: any) => {
     const routine = await tx.routine.update({
       where: { id },
       data: routineData,
     })
 
-    // Se houver nova lista de exercícios, substitui
     if (exercises) {
-      // Remove os exercícios antigos
       await tx.routineExercise.deleteMany({ where: { routineId: id } })
-      // Cria os novos
-      await tx.routineExercise.createMany({
-        data: exercises.map((ex) => ({
-          routineId: id,
-          exerciseId: ex.exerciseId,
-          order: ex.order,
-          sets: ex.sets,
-          restSeconds: ex.restSeconds,
-        })),
-      })
+
+      for (const ex of exercises) {
+        const routineExercise = await tx.routineExercise.create({
+          data: {
+            routineId: id,
+            exerciseId: ex.exerciseId,
+            order: ex.order,
+            sets: ex.sets,
+            restSeconds: ex.restSeconds,
+          },
+        })
+
+        if (ex.setsConfig && ex.setsConfig.length > 0) {
+          await tx.routineSetConfig.createMany({
+            data: ex.setsConfig.map((sc) => ({
+              routineExerciseId: routineExercise.id,
+              setNumber: sc.setNumber,
+              setType: sc.setType as any,
+            })),
+          })
+        }
+      }
     }
 
     return tx.routine.findUnique({
       where: { id },
       include: {
         exercises: {
-          include: { exercise: true },
+          include: {
+            exercise: true,
+            setsConfig: { orderBy: { setNumber: 'asc' } },
+          },
           orderBy: { order: 'asc' },
         },
       },

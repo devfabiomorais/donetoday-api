@@ -195,14 +195,23 @@ model Routine {
 }
 
 model RoutineExercise {
-  id          String   @id @default(uuid())
+  id          String              @id @default(uuid())
   routineId   String
   exerciseId  String
   order       Int
-  sets        Int      @default(3)
-  restSeconds Int      @default(60)
-  routine     Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
-  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  sets        Int                 @default(3)
+  restSeconds Int                 @default(60)
+  routine     Routine             @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercise    Exercise            @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  setsConfig  RoutineSetConfig[]
+}
+
+model RoutineSetConfig {
+  id                String          @id @default(uuid())
+  routineExerciseId String
+  setNumber         Int
+  setType           SetType         @default(NORMAL)
+  routineExercise   RoutineExercise @relation(fields: [routineExerciseId], references: [id], onDelete: Cascade)
 }
 
 model Workout {
