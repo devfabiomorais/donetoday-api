@@ -61,6 +61,68 @@ export const findRoutineById = async (id: string, userId?: string) => {
 }
 
 // Cria uma nova rotina com seus exercícios (transação)
+// export const createRoutine = async (
+//   userId: string,
+//   data: {
+//     name: string
+//     description?: string
+//     isPublic?: boolean
+//     exercises: Array<{
+//       exerciseId: string
+//       order: number
+//       sets: number
+//       restSeconds: number
+//       setsConfig?: Array<{
+//         setNumber: number
+//         setType: string
+//       }>
+//     }>
+//   }
+// ) => {
+//   const { exercises, ...routineData } = data
+
+//   return prisma.$transaction(async (tx: any) => {
+//     const routine = await tx.routine.create({
+//       data: { ...routineData, userId },
+//     })
+
+//     for (const ex of exercises) {
+//       const routineExercise = await tx.routineExercise.create({
+//         data: {
+//           routineId: routine.id,
+//           exerciseId: ex.exerciseId,
+//           order: ex.order,
+//           sets: ex.sets,
+//           restSeconds: ex.restSeconds,
+//         },
+//       })
+
+//       if (ex.setsConfig && ex.setsConfig.length > 0) {
+//         await tx.routineSetConfig.createMany({
+//           data: ex.setsConfig.map((sc) => ({
+//             routineExerciseId: routineExercise.id,
+//             setNumber: sc.setNumber,
+//             setType: sc.setType as any,
+//           })),
+//         })
+//       }
+//     }
+
+//     return tx.routine.findUnique({
+//       where: { id: routine.id },
+//       include: {
+//         exercises: {
+//           include: {
+//             exercise: true,
+//             setsConfig: { orderBy: { setNumber: 'asc' } },
+//           },
+//           orderBy: { order: 'asc' },
+//         },
+//       },
+//     })
+//   })
+// }
+
 export const createRoutine = async (
   userId: string,
   data: {
@@ -85,6 +147,11 @@ export const createRoutine = async (
     const routine = await tx.routine.create({
       data: { ...routineData, userId },
     })
+
+    console.log('exercises to save:', JSON.stringify(exercises.map(ex => ({
+      exerciseId: ex.exerciseId,
+      setsConfig: ex.setsConfig,
+    })), null, 2))
 
     for (const ex of exercises) {
       const routineExercise = await tx.routineExercise.create({
