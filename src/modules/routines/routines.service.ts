@@ -148,11 +148,6 @@ export const createRoutine = async (
       data: { ...routineData, userId },
     })
 
-    console.log('exercises to save:', JSON.stringify(exercises.map(ex => ({
-      exerciseId: ex.exerciseId,
-      setsConfig: ex.setsConfig,
-    })), null, 2))
-
     for (const ex of exercises) {
       const routineExercise = await tx.routineExercise.create({
         data: {

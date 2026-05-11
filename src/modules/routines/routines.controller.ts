@@ -45,18 +45,8 @@ export const getRoutineById = async (req: AuthRequest, res: Response, next: Next
 }
 
 // POST /routines – cria uma nova rotina
-// export const postRoutine = async (req: AuthRequest, res: Response, next: NextFunction) => {
-//   try {
-//     const routine = await createRoutine(req.userId!, req.body)
-//     res.status(201).json(routine)
-//   } catch (error) {
-//     next(error)
-//   }
-// }
-
 export const postRoutine = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    console.log('req.body:', JSON.stringify(req.body, null, 2))
     const routine = await createRoutine(req.userId!, req.body)
     res.status(201).json(routine)
   } catch (error) {
