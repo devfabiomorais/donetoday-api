@@ -8,4 +8,5 @@ export const createUserSchema = z.object({
 export const updateUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
   email: z.email('Invalid email format').optional(),
+  avatarUrl: z.string().url().optional(),
 })
