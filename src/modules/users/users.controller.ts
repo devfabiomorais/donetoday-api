@@ -13,8 +13,8 @@ export const getMe = async (req: AuthRequest, res: Response, next: NextFunction)
 
 export const putMe = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { name, email } = req.body
-    const user = await updateMe(req.userId!, name, email)
+    const { name, email, avatarUrl } = req.body
+    const user = await updateMe(req.userId!, { name, email, avatarUrl })
     res.json(user)
   } catch (error) {
     next(error)

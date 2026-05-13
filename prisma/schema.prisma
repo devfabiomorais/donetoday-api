@@ -144,6 +144,7 @@ model User {
   name                String
   email               String        @unique
   password            String
+  avatarUrl           String?
   role                Role          @default(USER)
   resetToken          String?
   resetTokenExpiresAt DateTime?
