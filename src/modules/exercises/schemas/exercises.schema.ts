@@ -14,6 +14,7 @@ export const createExerciseSchema = z.object({
   metricType: z.enum(['REPS', 'WEIGHT_REPS', 'TIME', 'WEIGHT_TIME', 'WEIGHT_REPS_TIME']),
   imageUrl: z.url('Invalid image URL').optional(),
   videoUrl: z.url('Invalid video URL').optional(),
+  isCustom: z.boolean().optional(),
 })
 
 export const updateExerciseSchema = createExerciseSchema.partial()

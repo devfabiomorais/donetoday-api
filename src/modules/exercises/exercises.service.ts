@@ -27,9 +27,11 @@ export const createExercise = async (userId: string, data: {
   metricType: MetricType
   imageUrl?: string
   videoUrl?: string
+  isCustom?: boolean
 }) => {
+  const { isCustom, ...rest } = data
   return prisma.exercise.create({
-    data: { ...data, isCustom: true, createdBy: userId }
+    data: { ...rest, isCustom: isCustom ?? true, createdBy: userId }
   })
 }
 
