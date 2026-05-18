@@ -154,6 +154,7 @@ model User {
   routines            Routine[]
   workouts            Workout[]
   exercises           Exercise[]
+  profile  UserProfile?
 }
 
 model UserSettings {
@@ -163,6 +164,22 @@ model UserSettings {
   defaultRestSeconds Int         @default(60)
   updatedAt          DateTime    @updatedAt
   user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  bio       String?
+  birthDate DateTime?
+  weight    Float?
+  height    Float?
+  waist     Float?
+  hip       Float?
+  biceps    Float?
+  thigh     Float?
+  chest     Float?
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Exercise {

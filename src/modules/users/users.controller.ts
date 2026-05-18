@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express'
 import { AuthRequest } from '../../middlewares/authenticate'
-import { findMe, updateMe, deleteMe } from './users.service'
+import { findMe, updateMe, deleteMe, findProfile, upsertProfile } from './users.service'
 
 export const getMe = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -25,6 +25,25 @@ export const removeMe = async (req: AuthRequest, res: Response, next: NextFuncti
   try {
     await deleteMe(req.userId!)
     res.status(204).send()
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const profile = await findProfile(req.userId!)
+    res.json(profile ?? {})
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const putProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { bio, birthDate, weight, height, waist, hip, biceps, thigh, chest } = req.body
+    const profile = await upsertProfile(req.userId!, { bio, birthDate, weight, height, waist, hip, biceps, thigh, chest })
+    res.json(profile)
   } catch (error) {
     next(error)
   }
